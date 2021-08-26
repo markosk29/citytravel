@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequestMapping("/travel")
@@ -39,7 +39,13 @@ public class CitiesController {
 
     @GetMapping("/city/all")
     public ResponseEntity<?> getAllCities() {
-        return null;
+        List<City> cities = citiesService.getAllCities();
+
+        if (cities.size() > 0) {
+            return ResponseEntity.ok().body(cities);
+        } else {
+            return ResponseEntity.ok().body("No cities available.");
+        }
     }
 
 }

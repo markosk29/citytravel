@@ -26,10 +26,10 @@ public class CitiesService {
     public List<City> getAllCities() {
         return cityRepository.findAll();
     }
-
+/*
     public List<City> getAllNeighbours() {
-       // return cityRepository.findNeighbours();
-    }
+       return cityRepository.findNeighbours();
+    }*/
 
     public void addVehicle(City city) {
         cityRepository.save(city);

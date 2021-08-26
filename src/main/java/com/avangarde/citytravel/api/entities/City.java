@@ -13,7 +13,8 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity(name = "cities")
+@Entity
+@Table(name = "cities", schema = "cityapp")
 public class City {
 
     @Id
@@ -23,12 +24,6 @@ public class City {
     @Column(name="city_name", length=50, nullable=false, unique=true)
     private String name;
 
-
-    @ManyToMany
-    @JoinTable(
-            name = "cityneighbours",
-            joinColumns = @JoinColumn(name = "city_id"),
-            inverseJoinColumns = @JoinColumn(name = "neighbour_id")
-    )
-    private Set<City> neighbours;
+    @OneToMany(mappedBy = "current")
+    private List<CityNeighbourRelation> neighbours;
 }

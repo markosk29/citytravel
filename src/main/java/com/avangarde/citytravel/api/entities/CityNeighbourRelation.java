@@ -1,23 +1,26 @@
 package com.avangarde.citytravel.api.entities;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import lombok.Getter;
+import lombok.Setter;
 
+import javax.persistence.*;
 
-@Entity(name = "cityneighbours")
+@Entity
+@Table(name = "cityneighbours", schema = "cityapp")
 public class CityNeighbourRelation {
 
-    @Column(name="city_id", length=50, nullable=false, unique=false)
-    private int cityId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private int id;
+
+    @Getter
+    @Setter
+    private int neighbour_id;
 
     @ManyToOne
     @JoinColumn(
             name = "city_id",
-            referencedColumnName = "city_id",
             nullable = false
     )
-    @Column(name="neighbour_id", length=50, nullable=false, unique=false)
-    private int neighbourId;
+    private City current;
 }
