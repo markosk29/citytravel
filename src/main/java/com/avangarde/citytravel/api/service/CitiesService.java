@@ -2,9 +2,11 @@ package com.avangarde.citytravel.api.service;
 
 import com.avangarde.citytravel.api.entities.City;
 import com.avangarde.citytravel.api.repository.CityRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class CitiesService {
     private final CityRepository cityRepository;
 
@@ -24,10 +26,10 @@ public class CitiesService {
     public List<City> getAllCities() {
         return cityRepository.findAll();
     }
-
+/*
     public List<City> getAllNeighbours() {
-        return cityRepository.findNeighbours();
-    }
+       return cityRepository.findNeighbours();
+    }*/
 
     public void addVehicle(City city) {
         cityRepository.save(city);
