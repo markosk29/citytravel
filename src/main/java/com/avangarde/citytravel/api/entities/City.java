@@ -5,8 +5,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
-@RestController
+
 @Builder
 @Getter
 @Setter
@@ -17,11 +18,17 @@ public class City {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int city_id;
 
     @Column(name="city_name", length=50, nullable=false, unique=true)
     private String name;
 
 
-    private List<City> neighbours;
+    @ManyToMany
+    @JoinTable(
+            name = "cityneighbours",
+            joinColumns = @JoinColumn(name = "city_id"),
+            inverseJoinColumns = @JoinColumn(name = "neighbour_id")
+    )
+    private Set<City> neighbours;
 }

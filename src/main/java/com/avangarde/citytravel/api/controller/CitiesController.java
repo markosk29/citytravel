@@ -9,12 +9,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class CitiesController {
-    private final CityRepository cityRepository;
     private final CitiesService citiesService;
 
     @Autowired
-    public CitiesController(CityRepository citiesRepository, CitiesService citiesService) {
-        this.cityRepository = citiesRepository;
+    public CitiesController(CitiesService citiesService) {
         this.citiesService = citiesService;
     }
 }
