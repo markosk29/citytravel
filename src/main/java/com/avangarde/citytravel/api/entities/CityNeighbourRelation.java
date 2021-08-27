@@ -23,4 +23,5 @@ public class CityNeighbourRelation {
             nullable = false
     )
     private City current;
+
 }

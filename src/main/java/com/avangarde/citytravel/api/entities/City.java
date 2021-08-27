@@ -1,11 +1,9 @@
 package com.avangarde.citytravel.api.entities;
 
 import lombok.*;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.persistence.*;
 import java.util.List;
-import java.util.Set;
 
 
 @Builder
@@ -26,4 +24,12 @@ public class City {
 
     @OneToMany(mappedBy = "current")
     private List<CityNeighbourRelation> neighbours;
+
+    @Override
+    public String toString() {
+        return "City{" +
+                "name='" + name + '\'' +
+                ", neighbours=" + neighbours +
+                '}';
+    }
 }
