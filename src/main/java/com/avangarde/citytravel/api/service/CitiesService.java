@@ -11,15 +11,6 @@ import java.util.List;
 @Service
 public class CitiesService {
     private final CityRepository cityRepository;
-    private List<City> route = new ArrayList<>();
-
-    public List<City> getRoute() {
-        return route;
-    }
-
-    public void setRoute(List<City> route) {
-        this.route = route;
-    }
 
     public CitiesService(CityRepository cityRepository) {
         this.cityRepository = cityRepository;
@@ -44,13 +35,5 @@ public class CitiesService {
             neighboursAsCity.add(cityRepository.findById(neighbour.getNeighbour_id()).get());
         }
         return neighboursAsCity;
-    }
-
-    public void deleteLastCity() {
-        route.remove(route.size() -1);
-    }
-
-    public void addCityToRoute(int id) {
-        this.route.add(cityRepository.findById(id).get());
     }
 }
