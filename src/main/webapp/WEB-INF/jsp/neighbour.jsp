@@ -8,7 +8,7 @@
     <h2> Current city : ${city.name} </h2>
     <p> Neighbours: </p>
       <c:forEach items="${neighbours}" var="city">
-          <a href="http://localhost:8080/city/${city.city_id}">
+          <a href="http://localhost:8080/city?id=${city.city_id}">
                   <button>
                   <c:out value="${city.name}"/>
                   </button>
