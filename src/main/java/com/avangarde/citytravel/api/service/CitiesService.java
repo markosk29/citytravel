@@ -1,25 +1,18 @@
 package com.avangarde.citytravel.api.service;
 
 import com.avangarde.citytravel.api.entities.City;
-import com.avangarde.citytravel.api.entities.CityNeighbourRelation;
+import com.avangarde.citytravel.api.mapper.CityMapper;
+import com.avangarde.citytravel.api.output.CityJSON;
 import com.avangarde.citytravel.api.repository.CityRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CitiesService {
     private final CityRepository cityRepository;
-    private List<City> route = new ArrayList<>();
-
-    public List<City> getRoute() {
-        return route;
-    }
-
-    public void setRoute(List<City> route) {
-        this.route = route;
-    }
 
     public CitiesService(CityRepository cityRepository) {
         this.cityRepository = cityRepository;
@@ -33,24 +26,20 @@ public class CitiesService {
         }
     }
 
-    public List<City> getAllCities() {
-        return cityRepository.findAll();
-    }
-
-    public List<City> getNeighbours(City city) {
-        List<City> neighboursAsCity = new ArrayList<>();
-        for (CityNeighbourRelation neighbour : city.getNeighbours()
-        ) {
-            neighboursAsCity.add(cityRepository.findById(neighbour.getNeighbour_id()).get());
+    public CityJSON getCityByName(String name) {
+        if (!cityRepository.findByName(name).isPresent()) {
+            return null;
+        } else {
+            return CityMapper.cityToJSON(cityRepository.findByName(name).get());
         }
-        return neighboursAsCity;
     }
 
-    public void deleteLastCity() {
-        route.remove(route.size() -1);
+
+    public List<CityJSON> getAllCities() {
+        return cityRepository.findAll().stream().map(CityMapper::cityToJSON).collect(Collectors.toList());
     }
 
-    public void addCityToRoute(int id) {
-        this.route.add(cityRepository.findById(id).get());
+    public List<CityJSON> getNeighbours(CityJSON city) {
+        return city.getNeighbours().stream().map(CityMapper::cityToJSON).collect(Collectors.toList());
     }
 }

@@ -11,19 +11,21 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "cities", schema = "cityapp")
+@Entity(name = "city")
 public class City {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int city_id;
+    @Column(name = "id", nullable = false, unique = true)
+    private int id;
 
-    @Column(name="city_name", length=50, nullable=false, unique=true)
+    @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "current")
-    private List<CityNeighbourRelation> neighbours;
+    @ManyToMany
+    @JoinTable(name="city_neighbours",
+            joinColumns={@JoinColumn(name="city_id")},
+            inverseJoinColumns={@JoinColumn(name="neighbour_id")})
+    private List<City> neighbours;
 
     @Override
     public String toString() {

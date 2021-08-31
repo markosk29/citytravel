@@ -8,14 +8,17 @@
 </head>
 <body>
 <h1>Welcome</h1>
+
 <h2>Please choose one of the following cities:</h2>
+
 <c:forEach var="city" items="${cities}">
-<a href="http://localhost:8080//city/${city.city_id}">
+<a href="http://localhost:8080/city?name=${city.name}">
     <button>
     <c:out value="${city.getName()}"/>
     </button>
 </a>
 <br>
 </c:forEach>
+
 </body>
 </html>
