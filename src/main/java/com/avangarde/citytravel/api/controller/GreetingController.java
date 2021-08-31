@@ -7,7 +7,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
@@ -35,9 +34,16 @@ public class GreetingController {
         return "travel";
     }
 
-    @GetMapping("/city/")
+    @GetMapping("/city")
     public String getCity(@RequestParam String name, Model model, HttpServletRequest request) {
         List<CityJSON> route = (List<CityJSON>) request.getSession().getAttribute("route");
+
+        if (!(route.isEmpty())) {
+            if ((name.equals(route.get(route.size() - 1).getName()))) {
+                route.remove(route.size() - 1);
+            }
+        }
+
         route.add(citiesService.getCityByName(name));
 
         model.addAttribute("city", citiesService.getCityByName(name));
@@ -57,8 +63,8 @@ public class GreetingController {
                                                        HttpServletRequest request) {
         List<CityJSON> route = (List<CityJSON>) request.getSession().getAttribute("route");
         route.remove(route.size() - 1);
-        attributes.addAttribute("name", route.get(route.size() - 2).getName());
-        return new RedirectView("/city?name=" + route.get(route.size() - 2).getName());
+        attributes.addAttribute("name", route.get(route.size() - 1).getName());
+        return new RedirectView("/city");
     }
 
     //Model and View methods
