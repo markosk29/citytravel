@@ -28,14 +28,12 @@
 
     <br>
     <br>
-    <a href="http://localhost:8080/route">
+    <a href="http://localhost:8080/route" style="text-decoration: none">
                       <button>
                       Stop
                       </button>
     </a>
-
-    <br>
-    <a href="http://localhost:8080/route/back"">
+    <a href="http://localhost:8080/route/back" style="text-decoration: none">
                           <button>
                           Go back
                           </button>
