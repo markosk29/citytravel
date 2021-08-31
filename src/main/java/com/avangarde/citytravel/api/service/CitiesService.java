@@ -1,12 +1,14 @@
 package com.avangarde.citytravel.api.service;
 
 import com.avangarde.citytravel.api.entities.City;
-import com.avangarde.citytravel.api.entities.CityNeighbourRelation;
+import com.avangarde.citytravel.api.mapper.CityMapper;
+import com.avangarde.citytravel.api.output.CityJSON;
 import com.avangarde.citytravel.api.repository.CityRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class CitiesService {
@@ -24,16 +26,20 @@ public class CitiesService {
         }
     }
 
-    public List<City> getAllCities() {
-        return cityRepository.findAll();
+    public CityJSON getCityByName(String name) {
+        if (!cityRepository.findByName(name).isPresent()) {
+            return null;
+        } else {
+            return CityMapper.cityToJSON(cityRepository.findByName(name).get());
+        }
     }
 
-    public List<City> getNeighbours(City city) {
-        List<City> neighboursAsCity = new ArrayList<>();
-        for (CityNeighbourRelation neighbour : city.getNeighbours()
-        ) {
-            neighboursAsCity.add(cityRepository.findById(neighbour.getNeighbour_id()).get());
-        }
-        return neighboursAsCity;
+
+    public List<CityJSON> getAllCities() {
+        return cityRepository.findAll().stream().map(CityMapper::cityToJSON).collect(Collectors.toList());
+    }
+
+    public List<CityJSON> getNeighbours(CityJSON city) {
+        return city.getNeighbours().stream().map(CityMapper::cityToJSON).collect(Collectors.toList());
     }
 }
