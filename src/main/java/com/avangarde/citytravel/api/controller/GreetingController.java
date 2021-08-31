@@ -35,7 +35,7 @@ public class GreetingController {
     }
 
     @GetMapping("/city")
-    public String getCity(@RequestParam String name, Model model, HttpServletRequest request) {
+    public String getNeighbours(@RequestParam String name, Model model, HttpServletRequest request) {
         List<CityJSON> route = (List<CityJSON>) request.getSession().getAttribute("route");
 
         if (!(route.isEmpty())) {
@@ -63,6 +63,11 @@ public class GreetingController {
                                                        HttpServletRequest request) {
         List<CityJSON> route = (List<CityJSON>) request.getSession().getAttribute("route");
         route.remove(route.size() - 1);
+
+        if (route.size() == 0) {
+            return new RedirectView("/");
+        }
+
         attributes.addAttribute("name", route.get(route.size() - 1).getName());
         return new RedirectView("/city");
     }
@@ -79,7 +84,7 @@ public class GreetingController {
     }
 
     @GetMapping("/mav/city")
-    public ModelAndView mav_getCity(@RequestParam String name, HttpServletRequest request) {
+    public ModelAndView mav_getNeighbours(@RequestParam String name, HttpServletRequest request) {
         List<CityJSON> route = (List<CityJSON>) request.getSession().getAttribute("route");
 
         if (!(route.isEmpty())) {
