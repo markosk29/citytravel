@@ -12,7 +12,7 @@
 <h2>Please choose one of the following cities:</h2>
 
 <c:forEach var="city" items="${cities}">
-<a href="http://localhost:8080/city/${city.name}">
+<a href="http://localhost:8080/city?name=${city.name}">
     <button>
     <c:out value="${city.getName()}"/>
     </button>

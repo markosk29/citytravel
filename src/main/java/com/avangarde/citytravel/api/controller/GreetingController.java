@@ -9,6 +9,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
@@ -34,8 +35,8 @@ public class GreetingController {
         return "travel";
     }
 
-    @GetMapping("/city/{name}")
-    public String getCity(@PathVariable String name, Model model, HttpServletRequest request) {
+    @GetMapping("/city/")
+    public String getCity(@RequestParam String name, Model model, HttpServletRequest request) {
         List<CityJSON> route = (List<CityJSON>) request.getSession().getAttribute("route");
         route.add(citiesService.getCityByName(name));
 
@@ -57,7 +58,7 @@ public class GreetingController {
         List<CityJSON> route = (List<CityJSON>) request.getSession().getAttribute("route");
         route.remove(route.size() - 1);
         attributes.addAttribute("name", route.get(route.size() - 2).getName());
-        return new RedirectView("/city/{name}");
+        return new RedirectView("/city?name=" + route.get(route.size() - 2).getName());
     }
 
     //Model and View methods
@@ -71,8 +72,8 @@ public class GreetingController {
         return modelAndView;
     }
 
-    @GetMapping("/mav/city/{name}")
-    public ModelAndView mav_getCity(@PathVariable String name, HttpServletRequest request) {
+    @GetMapping("/mav/city")
+    public ModelAndView mav_getCity(@RequestParam String name, HttpServletRequest request) {
         List<CityJSON> route = (List<CityJSON>) request.getSession().getAttribute("route");
 
         if (!(route.isEmpty())) {
@@ -107,6 +108,6 @@ public class GreetingController {
         CityJSON city = route.get(route.size() - 1);
 
         model.addAttribute("name", city.getName());
-        return new ModelAndView("redirect:/city/{name}", model);
+        return new ModelAndView("redirect:/city?name=" + city.getName(), model);
     }
 }
