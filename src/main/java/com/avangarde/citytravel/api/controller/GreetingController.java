@@ -1,15 +1,15 @@
 package com.avangarde.citytravel.api.controller;
 
-
-import com.avangarde.citytravel.api.entities.City;
+import com.avangarde.citytravel.api.output.CityJSON;
 import com.avangarde.citytravel.api.service.CitiesService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -22,83 +22,91 @@ import java.util.List;
 public class GreetingController {
     private final CitiesService citiesService;
 
+    @Autowired
+    public GreetingController(CitiesService citiesService) {
+        this.citiesService = citiesService;
+    }
+
+    @RequestMapping("/")
+    public String home(Model model, HttpServletRequest request) {
+        request.getSession().setAttribute("route", new ArrayList<CityJSON>());
+        model.addAttribute("cities", citiesService.getAllCities());
+        return "travel";
+    }
+
+    @GetMapping("/city/{name}")
+    public String getCity(@PathVariable String name, Model model, HttpServletRequest request) {
+        List<CityJSON> route = (List<CityJSON>) request.getSession().getAttribute("route");
+        route.add(citiesService.getCityByName(name));
+
+        model.addAttribute("city", citiesService.getCityByName(name));
+        model.addAttribute("neighbours", citiesService.getNeighbours(citiesService.getCityByName(name)));
+        return "neighbour";
+    }
+
+    @GetMapping("route")
+    public String getRoute(Model model, HttpServletRequest request) {
+        List<CityJSON> route = (List<CityJSON>) request.getSession().getAttribute("route");
+        model.addAttribute("route", route);
+        return "final";
+    }
+
+    @GetMapping("/route/back")
+    public RedirectView redirectWithRedirectAttributes(RedirectAttributes attributes,
+                                                       HttpServletRequest request) {
+        List<CityJSON> route = (List<CityJSON>) request.getSession().getAttribute("route");
+        route.remove(route.size() - 1);
+        attributes.addAttribute("name", route.get(route.size() - 2).getName());
+        return new RedirectView("/city/{name}");
+    }
+
+    //Model and View methods
 
     @RequestMapping("/mav/")
     public ModelAndView mav_home(HttpServletRequest request) {
-        request.getSession().setAttribute("route", new ArrayList<City>());
+        request.getSession().setAttribute("route", new ArrayList<CityJSON>());
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.addObject("cities", this.citiesService.getAllCities());
         modelAndView.setViewName("travel");
         return modelAndView;
     }
 
-    @RequestMapping("/")
-    public String home(Model model) {
-        model.addAttribute("cities", citiesService.getAllCities());
-        return "travel";
-    }
-
-    @GetMapping("/mav/city/{id}")
-    public ModelAndView mav_getCity(@PathVariable int id, HttpServletRequest request) {
-        List<City> route = (List<City>) request.getSession().getAttribute("route");
+    @GetMapping("/mav/city/{name}")
+    public ModelAndView mav_getCity(@PathVariable String name, HttpServletRequest request) {
+        List<CityJSON> route = (List<CityJSON>) request.getSession().getAttribute("route");
 
         if (!(route.isEmpty())) {
-            if ((id == route.get(route.size() - 1).getCity_id())) {
+            if ((name.equals(route.get(route.size() - 1).getName()))) {
                 route.remove(route.size() - 1);
             }
         }
 
-        route.add(citiesService.getCity(id));
+        route.add(citiesService.getCityByName(name));
 
         ModelAndView modelAndView = new ModelAndView("neighbour");
-        modelAndView.addObject("city", citiesService.getCity(id));
-        modelAndView.addObject("neighbours", citiesService.getNeighbours(citiesService.getCity(id)));
+        modelAndView.addObject("city", citiesService.getCityByName(name));
+        modelAndView.addObject("neighbours", citiesService
+                .getNeighbours(citiesService
+                        .getCityByName(name)));
         return modelAndView;
     }
 
-    @GetMapping("/city/{name}")
-    public String getCity(@PathVariable String name, Model model) {
-        citiesService.addCityToRoute(name);
-        model.addAttribute("city", citiesService.getCityByName(name));
-        model.addAttribute("neighbours", citiesService.getNeighbours(citiesService.getCityByName(name)));
-        return "neighbour";
-    }
-
-
     @GetMapping("/mav/route")
-    public ModelAndView mav_getRoute() {
+    public ModelAndView mav_getRoute(HttpServletRequest request) {
+        List<CityJSON> route = (List<CityJSON>) request.getSession().getAttribute("route");
         ModelAndView modelAndView = new ModelAndView("final");
-        modelAndView.addObject("route", citiesService.getRoute());
+        modelAndView.addObject("route", route);
         return modelAndView;
     }
 
     @GetMapping("/mav/route/back")
     public ModelAndView mav_goBackOneCity(ModelMap model, HttpServletRequest request) {
-        List<City> route = (List<City>) request.getSession().getAttribute("route");
+        List<CityJSON> route = (List<CityJSON>) request.getSession().getAttribute("route");
         route.remove(route.size() - 1);
 
-        City city = route.get(route.size() - 1);
+        CityJSON city = route.get(route.size() - 1);
 
-        model.addAttribute("id", city.getCity_id());
-        return new ModelAndView("redirect:/city/{id}", model);
-    }
-
-    @GetMapping("route")
-    public String getRoute(Model model) {
-        model.addAttribute("route", citiesService.getRoute());
-        return "final";
-    }
-
-    @GetMapping("/route/back")
-    public RedirectView redirectWithRedirectAttributes(RedirectAttributes attributes) {
-        citiesService.deleteLastCity();
-        attributes.addAttribute("name", citiesService.getRoute().get(citiesService.getRoute().size() - 2).getName());
-        return new RedirectView("/city/{name}");
-    }
-
-
-    @Autowired
-    public GreetingController(CitiesService citiesService) {
-        this.citiesService = citiesService;
+        model.addAttribute("name", city.getName());
+        return new ModelAndView("redirect:/city/{name}", model);
     }
 }
